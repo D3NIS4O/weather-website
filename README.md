@@ -13,7 +13,7 @@ CSV to JSON, JSON to CSV, JSON formatting, minification and validation. Browser 
 
 ## Payment status: TEST ONLY
 
-The Worker accepts only Solana devnet USDC, not real USDC. 0.01 test USDC (10,000 atomic units) is required per successful paid response. Network and mint are hard-coded to devnet and cannot be changed by request parameters. Wallet recipient: ANdBMwRimMyrm1qJ3vFtixK1DQ8WgSLKBYWxvcTHCvgY.
+The Worker accepts only Solana devnet USDC, not real USDC. 0.0004 test USDC (400 atomic units) is required per successful paid response. Network and mint are hard-coded to devnet and cannot be changed by request parameters. Wallet recipient: ANdBMwRimMyrm1qJ3vFtixK1DQ8WgSLKBYWxvcTHCvgY.
 
 GET /ai is the paid AI entrance and returns an API catalog after one payment. POST /api/convert performs a conversion and requires a separate new payment. No access passes, sessions or reusable credits. /docs and /health are free discovery endpoints. The free public browser site is not a secure AI-detection gate: bots can still use it or copy this public source.
 

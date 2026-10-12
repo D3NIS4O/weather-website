@@ -4,7 +4,7 @@ const NETWORK = 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1';
 const ASSET = '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU';
 const PAY_TO = 'ANdBMwRimMyrm1qJ3vFtixK1DQ8WgSLKBYWxvcTHCvgY';
 const FACILITATOR = 'https://x402.org/facilitator';
-const AMOUNT = '10000';
+const AMOUNT = '400';
 const WEBSITE = 'https://d3nis4o.github.io/weather-website/';
 const baseHeaders = {'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type, PAYMENT-SIGNATURE','Access-Control-Expose-Headers':'PAYMENT-REQUIRED, PAYMENT-RESPONSE'};
 export const json = (body, status = 200, headers = {}) => new Response(JSON.stringify(body), {status,headers:{...baseHeaders,...headers}});
@@ -23,7 +23,7 @@ async function requirements() {
   const kind = await supportedKind();
   return {scheme:'exact',network:NETWORK,asset:ASSET,amount:AMOUNT,payTo:PAY_TO,maxTimeoutSeconds:120,extra:{feePayer:kind.extra.feePayer}};
 }
-function resource(url) { return {url,description:'DataShift test-only data conversion; 0.01 devnet USDC per response. No real-money payments.',mimeType:'application/json'}; }
+function resource(url) { return {url,description:'DataShift test-only data conversion; 0.0004 devnet USDC per response. No real-money payments.',mimeType:'application/json'}; }
 function challenge(url, req, error='PAYMENT-SIGNATURE header is required') {
   const body = {x402Version:2,error,resource:resource(url),accepts:[req]};
   return json(body,402,{'PAYMENT-REQUIRED':encoded(body)});
@@ -79,7 +79,7 @@ export default {
       const url=new URL(request.url);
       if(request.method==='OPTIONS') return new Response(null,{status:204,headers:baseHeaders});
       if(url.pathname==='/' && request.method==='GET') return Response.redirect(WEBSITE,302);
-      const info={name:'DataShift',mode:'test-only',realPaymentsEnabled:false,network:NETWORK,asset:ASSET,payTo:PAY_TO,price:'0.01 devnet USDC per response',accessPasses:false,operations:OPERATIONS,inputLimitBytes:MAX_BYTES,aiEntry:'/ai',conversionEndpoint:'/api/convert',website:WEBSITE};
+      const info={name:'DataShift',mode:'test-only',realPaymentsEnabled:false,network:NETWORK,asset:ASSET,payTo:PAY_TO,price:'0.0004 devnet USDC per response',accessPasses:false,operations:OPERATIONS,inputLimitBytes:MAX_BYTES,aiEntry:'/ai',conversionEndpoint:'/api/convert',website:WEBSITE};
       if(url.pathname==='/health' && request.method==='GET') {
         try {await supportedKind();return json({...info,facilitatorReady:true});} catch(e) {return json({...info,facilitatorReady:false,error:e.message},503);}
       }
