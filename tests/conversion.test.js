@@ -1,0 +1,14 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {convert,parseCSV,toCSV,MAX_BYTES} from '../conversion.js';
+test('CSV header and rows',()=>assert.deepEqual(parseCSV('name,age\nAda,36\n'),[{name:'Ada',age:'36'}]));
+test('quotes, comma, newline, CRLF, BOM',()=>assert.deepEqual(parseCSV('\uFEFFa,b\r\n"hello, world","a""b\nc"\r\n'),[{a:'hello, world',b:'a"b\nc'}]));
+test('empty final field',()=>assert.deepEqual(parseCSV('a,b\n1,'),[{a:'1',b:''}]));
+test('reject malformed quotes',()=>{for(const input of ['a\n"x','a\n"x"bad','a\nhi"'])assert.throws(()=>parseCSV(input));});
+test('reject duplicate and blank headers',()=>{assert.throws(()=>parseCSV('a,a\n1,2'));assert.throws(()=>parseCSV('a,\n1,2'));});
+test('reject mismatched rows',()=>assert.throws(()=>parseCSV('a,b\n1')));
+test('safe prototype-related headers',()=>{const r=parseCSV('__proto__,constructor\nx,y')[0];assert.equal(Object.getPrototypeOf(r),Object.prototype);assert.equal(r.__proto__,'x');});
+test('JSON to CSV unions keys and preserves values',()=>assert.equal(toCSV([{a:'hello, world',b:2},{a:'x"y',c:true}]),'a,b,c\r\n"hello, world",2,\r\n"x""y",,true'));
+test('spreadsheet formula strings escaped, numeric negatives not',()=>assert.equal(toCSV([{a:'=1+1',b:-2,c:' @sum(1)',d:'+evil'}]),"a,b,c,d\r\n'=1+1,-2,' @sum(1),'+evil"));
+test('invalid object CSV shapes rejected',()=>{for(const d of [[],{},[1],[null]])assert.throws(()=>toCSV(d));});
+test('format, minify, validate',()=>{assert.equal(convert('minify-json',' {"a":1} ').output,'{"a":1}');assert.equal(JSON.parse(convert('validate-json','null').output).type,'null');assert.ok(convert('format-json','{"a":1}').output.includes('\n'));});
+test('invalid operation, JSON, type and oversized input rejected',()=>{assert.throws(()=>convert('oops',''));assert.throws(()=>convert('format-json','{'));assert.throws(()=>convert('format-json',1));assert.throws(()=>convert('format-json','x'.repeat(MAX_BYTES+1)));});
+test('row limit',()=>assert.throws(()=>parseCSV('a\n'+'x\n'.repeat(2001))));

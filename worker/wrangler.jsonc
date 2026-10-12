@@ -1,0 +1,9 @@
+{
+  "name":"datashift-api",
+  "main":"worker.js",
+  "compatibility_date":"2026-10-12",
+  "workers_dev":true,
+  "durable_objects":{"bindings":[{"name":"PAYMENT_GUARD","class_name":"PaymentGuard"}]},
+  "migrations":[{"tag":"v1","new_sqlite_classes":["PaymentGuard"]}],
+  "observability":{"enabled":false}
+}
